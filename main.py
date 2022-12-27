@@ -27,7 +27,7 @@ def current_state(clientid, vehicleids):
     vehicleids = vehicleids.replace('"', '')
     vehicleidsList = vehicleids[1:-1].split(",")
     api_hash = "$2y$10$B3j6pYUWdewxAiiXJA4KW.Q6j8I7J5UmUWG0EtT9SWz79xKAFnaF."
-    jsonobj = requests.get(f"https://tracknow.pk/api/get_devices?lang=en&user_api_hash={api_hash}").json()
+    jsonobj = requests.get(f"https://localhost/api/get_devices?lang=en&user_api_hash={api_hash}").json()
     dictobject = jsonobj[0]
     items = dictobject["items"]
     for item in items:
