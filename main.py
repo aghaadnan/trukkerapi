@@ -31,6 +31,7 @@ def current_state(clientid, vehicleids):
     dictobject = jsonobj[0]
     items = dictobject["items"]
     for item in items:
+        
         resposedict = {
     'vehicleId' : '',
     'lat' : '',
@@ -43,12 +44,21 @@ def current_state(clientid, vehicleids):
     'fueldata' : ''
 }
         if item['name'] in vehicleids:
+            address = requests.get(f'https://nominatim.openstreetmap.org/reverse?format=geojson&lat={item["lat"]}&lon={item["lng"]}').json()
+            features = address['features']
+            
+            features1 = features[0]
+            properties = features1['properties']
+            #print(features1)
+            display_address = properties['display_name']
+
             resposedict['vehicleId'] = item['name']
             resposedict['lat'] = item["lat"]
             resposedict['long'] = item["lng"]
             resposedict['timestamp'] = item["timestamp"]
             resposedict['engineStatus'] = item["online"]
             resposedict['speed'] = item["speed"]
+            resposedict['locationame']  =  display_address
             responselist.append(resposedict)
     return responselist
 
