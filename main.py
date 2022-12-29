@@ -44,7 +44,7 @@ def current_state(clientid, vehicleids):
     'fueldata' : ''
 }
         if item['name'] in vehicleids:
-            address = requests.get(f'https://nominatim.openstreetmap.org/reverse?format=geojson&lat={item["lat"]}&lon={item["lng"]}').json()
+            address = requests.get(f'http://osm.autotel.pk:8080/reverse?format=geojson&lat={item["lat"]}&lon={item["lng"]}').json()
             features = address['features']
             
             features1 = features[0]
@@ -102,6 +102,21 @@ def get_voilations(clientid, vehicleid, datefrom, dateto):
         if not item['message'] == 'Ignition ON' and not item['message'] == 'Ignition OFF':
             voilationdict['voilation'] = item['message']
             voilationdict['timestamp'] = item['time']
+            voilationdict['lat'] = item['latitude']
+            voilationdict['long'] = item['longitude']
+            voilationdict['engineStatus'] = 'ON'
+            additional = item['additional']
+            voilationdict['speed'] = additional['overspeed_speed']
+            voilationdict['Location name'] = item['longitude']
+            address = requests.get(f'http://osm.autotel.pk:8080/reverse?format=geojson&lat={item["latitude"]}&lon={item["longitude"]}').json()
+            features = address['features']
+            
+            features1 = features[0]
+            properties = features1['properties']
+            #print(features1)
+            display_address = properties['display_name']
+            voilationdict['Location name'] = display_address
+            voilationdict['Fuel Data']  = ''
             voilationslist.append(voilationdict)
 
 
