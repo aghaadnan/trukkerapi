@@ -57,8 +57,10 @@ def current_state(clientid, vehicleids):
             resposedict['long'] = item["lng"]
             resposedict['timestamp'] = item["timestamp"]
             resposedict['engineStatus'] = item["online"]
-            resposedict['speed'] = item["speed"]
+            resposedict['speed'] = item["speed"] 
             resposedict['locationame']  =  display_address
+            resposedict['VehicleDirectionAngle'] = item['course']
+            resposedict['fueldata'] = ''
             responselist.append(resposedict)
     return responselist
 
