@@ -3,7 +3,7 @@ import json
 import requests
 
 
-api = FastAPI()
+api = FastAPI(title="Tracknow API")
 
 '''
 [ {
