@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 import json
 import requests
+import mysql.connector
 
 
 api = FastAPI(title="Tracknow API")
@@ -66,6 +67,26 @@ def current_state(clientid, vehicleids):
 
 @api.get("/detail_history")
 def detail_history(clientid, vehicleid, datefrom, dateto):
+    # Connect to the database
+    cnx = mysql.connector.connect(
+        host="localhost",
+        user="root",
+        password="hash4",
+        database="hypegps_traccar"
+    )
+    # Create a cursor object
+    cursor = cnx.cursor()
+
+    # Execute the SHOW TABLES query
+    cursor.execute("SHOW TABLES LIKE 'positions_13'")
+
+    # Fetch the results
+    results = cursor.fetchall()
+
+    # Print the results
+    print(results)
+    cursor.close()
+    cnx.close()
     responselist = []
     api_hash = "$2y$10$B3j6pYUWdewxAiiXJA4KW.Q6j8I7J5UmUWG0EtT9SWz79xKAFnaF."
     jsonobj = requests.get(f"https://tracknow.pk/api/get_devices?lang=en&user_api_hash={api_hash}").json()
