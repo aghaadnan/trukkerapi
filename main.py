@@ -73,7 +73,8 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
         host="localhost",
         user="root",
         password="hash4",
-        database='hypegps_traccar'
+        database="hypegps_traccar",
+        group="hypegps"
     )
     # Create a cursor object
     cursor = cnx.cursor()
