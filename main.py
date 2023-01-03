@@ -3,6 +3,7 @@ import json
 import requests
 #import mysql.connector
 import pymysql
+import re
 
 
 api = FastAPI(title="Tracknow API")
@@ -68,8 +69,10 @@ def current_state(clientid, vehicleids):
 
 @api.get("/detail_history")
 def detail_history(clientid, vehicleid, datefrom, dateto):
-    # Connect to the database
+    
     tablename = f'positions_{vehicleid}'
+    vehicleHistory = []
+    # Connect to the database
     cnx = pymysql.connect(
         host="localhost",
         user="root",
@@ -81,13 +84,41 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
     cursor = cnx.cursor()
 
     # Execute the SHOW TABLES query
-    cursor.execute(f"SHOW TABLES LIKE 'positions_846'")
+    cursor.execute(f"SHOW TABLES LIKE '{tablename}'")
 
     # Fetch the results
     results = cursor.fetchall()
-
+    print(f'length of tupple {len(results)}')
     # Print the results
-    print(results)
+    if len(results) > 0:
+        cursor.execute(f"SELECT * FROM `{tablename}` WHERE `time` BETWEEN '{datefrom} 00:00:00' AND '{dateto} 23:59:59'")
+        rows = cursor.fetchall()
+        #rows = cursor.execute(f"SELECT * FROM '{tablename}' WHERE 'time' BETWEEN '{datefrom} 00:00:00' AND '{dateto} 23:59:59'")
+        
+        for row in rows:
+            history = {}
+            '''
+            address = requests.get(f'http://osm.autotel.pk:8080/reverse?format=geojson&lat={row[4]}&lon={row[5]}').json()
+            features = address['features']
+            
+            features1 = features[0]
+            properties = features1['properties']
+            #print(features1)
+            display_address = properties['display_name']
+            '''
+            history['lat'] = row[4]
+            history['long'] = row[5]
+            match = re.search(r"<ignition>(\w+)</ignition>", row[6])
+            history['timestamp'] = row[9]
+            history['engineStatus'] = match.group(1)
+            history['Location name'] = ''
+            history['Fuel Data'] = ''
+            history['Vehicle direction angle'] = row[3]
+            vehicleHistory.append(history)
+            
+    else:
+        print('No Vehicle data found.')
+    #print(vehicleHistory)
     cursor.close()
     cnx.close()
     responselist = []
@@ -115,7 +146,7 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
             resposedict['engineStatus'] = item["online"]
             resposedict['speed'] = item["speed"]
             responselist.append(resposedict)
-    return  responselist
+    return  vehicleHistory
 
 @api.get("/violations/")
 def get_voilations(clientid, vehicleid, datefrom, dateto):
