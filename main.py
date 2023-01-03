@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 import json
 import requests
-import mysql.connector
+#import mysql.connector
+import pymysql
 
 
 api = FastAPI(title="Tracknow API")
@@ -69,12 +70,12 @@ def current_state(clientid, vehicleids):
 def detail_history(clientid, vehicleid, datefrom, dateto):
     # Connect to the database
     tablename = f'positions_{vehicleid}'
-    cnx = mysql.connector.connect(
+    cnx = pymysql.connect(
         host="localhost",
         user="root",
         password="hash4",
-        database="hypegps_traccar",
-        group="hypegps"
+        database="hypegps_traccar"
+        #group="hypegps"
     )
     # Create a cursor object
     cursor = cnx.cursor()
