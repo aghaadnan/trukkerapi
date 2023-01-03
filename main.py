@@ -73,13 +73,13 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
         host="localhost",
         user="root",
         password="hash4",
-        database="hypegps_traccar"
+        database='hypegps_traccar'
     )
     # Create a cursor object
     cursor = cnx.cursor()
 
     # Execute the SHOW TABLES query
-    cursor.execute(f"SHOW TABLES LIKE '{tablename}'")
+    cursor.execute(f"SHOW TABLES LIKE 'positions_846'")
 
     # Fetch the results
     results = cursor.fetchall()
