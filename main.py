@@ -70,7 +70,7 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
     # Connect to the database
     tablename = f'positions_{vehicleid}'
     cnx = mysql.connector.connect(
-        host="localhost",
+        host="103.31.82.249",
         user="root",
         password="hash4",
         database="hypegps_traccar"
