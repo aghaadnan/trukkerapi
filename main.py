@@ -68,6 +68,7 @@ def current_state(clientid, vehicleids):
 @api.get("/detail_history")
 def detail_history(clientid, vehicleid, datefrom, dateto):
     # Connect to the database
+    tablename = f'positions_{vehicleid}'
     cnx = mysql.connector.connect(
         host="localhost",
         user="root",
@@ -78,7 +79,7 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
     cursor = cnx.cursor()
 
     # Execute the SHOW TABLES query
-    cursor.execute("SHOW TABLES LIKE 'positions_13'")
+    cursor.execute(f"SHOW TABLES LIKE '{tablename}'")
 
     # Fetch the results
     results = cursor.fetchall()
