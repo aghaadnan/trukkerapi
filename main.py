@@ -110,6 +110,7 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
             history['long'] = row[5]
             match = re.search(r"<ignition>(\w+)</ignition>", row[6])
             history['timestamp'] = row[9]
+            history['speed'] = row[8]
             history['engineStatus'] = match.group(1)
             history['Location name'] = ''
             history['Fuel Data'] = ''
