@@ -46,7 +46,7 @@ def current_state(clientid, vehicleids):
     'VehicleDirectionAngle' : '',
     'fueldata' : ''
 }
-        if item['id'] in vehicleids:
+        if str(item['id']) in vehicleids:
             address = requests.get(f'http://osm.autotel.pk:8080/reverse?format=geojson&lat={item["lat"]}&lon={item["lng"]}').json()
             features = address['features']
             
