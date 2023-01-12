@@ -114,7 +114,8 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
             history['engineStatus'] = match.group(1)
             history['Location name'] = display_address
             history['Fuel Data'] = ''
-            history['Vehicle direction angle'] = row[3]
+            history['vector_angle'] = row[3]
+            history['temprature'] = ''
             vehicleHistory.append(history)
             
     else:
