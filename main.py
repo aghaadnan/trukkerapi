@@ -55,7 +55,7 @@ def current_state(clientid, vehicleids):
             #print(features1)
             display_address = properties['display_name']
 
-            resposedict['vehicleId'] = item['name']
+            resposedict['vehicleId'] = str(item['id'])
             resposedict['lat'] = item["lat"]
             resposedict['long'] = item["lng"]
             resposedict['timestamp'] = item["timestamp"]
@@ -97,7 +97,7 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
         
         for row in rows:
             history = {}
-            
+            '''
             address = requests.get(f'http://osm.autotel.pk:8080/reverse?format=geojson&lat={row[4]}&lon={row[5]}').json()
             features = address['features']
             
@@ -105,14 +105,14 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
             properties = features1['properties']
             #print(features1)
             display_address = properties['display_name']
-            
+            '''
             history['lat'] = row[4]
             history['long'] = row[5]
             match = re.search(r"<ignition>(\w+)</ignition>", row[6])
             history['timestamp'] = row[9]
             history['speed'] = row[8]
             history['engineStatus'] = match.group(1)
-            history['Location name'] = display_address
+            history['Location name'] = ''#display_address
             history['Fuel Data'] = ''
             history['vector_angle'] = row[3]
             history['temprature'] = ''
