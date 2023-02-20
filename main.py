@@ -30,7 +30,8 @@ def current_state(clientid, vehicleids):
     vehicleids = vehicleids.replace('"', '')
     vehicleidsList = vehicleids[1:-1].split(",")
     api_hash = "$2y$10$B3j6pYUWdewxAiiXJA4KW.Q6j8I7J5UmUWG0EtT9SWz79xKAFnaF."
-    jsonobj = requests.get(f"http://localhost/api/get_devices?lang=en&user_api_hash={api_hash}").json()
+    #jsonobj = requests.get(f"http://localhost/api/get_devices?lang=en&user_api_hash={api_hash}").json()
+    jsonobj = requests.get(f"https://tracknow.pk/api/get_devices?lang=en&user_api_hash={api_hash}").json()
     dictobject = jsonobj[0]
     items = dictobject["items"]
     for item in items:
@@ -46,8 +47,9 @@ def current_state(clientid, vehicleids):
     'VehicleDirectionAngle' : '',
     'fueldata' : ''
 }
-        if str(item['id']) in vehicleids:
-            address = requests.get(f'http://osm.autotel.pk:8080/reverse?format=geojson&lat={item["lat"]}&lon={item["lng"]}').json()
+        device_data = item['device_data']
+        if str(device_data['imei']) in vehicleids:
+            address = requests.get(f'http://103.31.81.217:8080/reverse?format=geojson&lat={item["lat"]}&lon={item["lng"]}').json()
             features = address['features']
             
             features1 = features[0]
@@ -70,64 +72,13 @@ def current_state(clientid, vehicleids):
 @api.get("/detail_history")
 def detail_history(clientid, vehicleid, datefrom, dateto):
     
-    tablename = f'positions_{vehicleid}'
-    vehicleHistory = []
-    # Connect to the database
-    cnx = pymysql.connect(
-        host="localhost",
-        user="root",
-        password="hash4",
-        database="hypegps_traccar"
-        #group="hypegps"
-    )
-    # Create a cursor object
-    cursor = cnx.cursor()
 
-    # Execute the SHOW TABLES query
-    cursor.execute(f"SHOW TABLES LIKE '{tablename}'")
-
-    # Fetch the results
-    results = cursor.fetchall()
-    print(f'length of tupple {len(results)}')
-    # Print the results
-    if len(results) > 0:
-        cursor.execute(f"SELECT * FROM `{tablename}` WHERE `time` BETWEEN '{datefrom} 00:00:00' AND '{dateto} 23:59:59'")
-        rows = cursor.fetchall()
-        #rows = cursor.execute(f"SELECT * FROM '{tablename}' WHERE 'time' BETWEEN '{datefrom} 00:00:00' AND '{dateto} 23:59:59'")
-        
-        for row in rows:
-            history = {}
-            '''
-            address = requests.get(f'http://osm.autotel.pk:8080/reverse?format=geojson&lat={row[4]}&lon={row[5]}').json()
-            features = address['features']
-            
-            features1 = features[0]
-            properties = features1['properties']
-            #print(features1)
-            display_address = properties['display_name']
-            '''
-            history['lat'] = row[4]
-            history['long'] = row[5]
-            match = re.search(r"<ignition>(\w+)</ignition>", row[6])
-            history['timestamp'] = row[9]
-            history['speed'] = row[8]
-            history['engineStatus'] = match.group(1)
-            history['Location name'] = ''#display_address
-            history['Fuel Data'] = ''
-            history['vector_angle'] = row[3]
-            history['temprature'] = ''
-            vehicleHistory.append(history)
-            
-    else:
-        print('No Vehicle data found.')
-    #print(vehicleHistory)
-    cursor.close()
-    cnx.close()
-    responselist = []
     api_hash = "$2y$10$B3j6pYUWdewxAiiXJA4KW.Q6j8I7J5UmUWG0EtT9SWz79xKAFnaF."
     jsonobj = requests.get(f"https://tracknow.pk/api/get_devices?lang=en&user_api_hash={api_hash}").json()
     dictobject = jsonobj[0]
     items = dictobject["items"]
+    responselist = []
+    vehicleHistory = []
     for item in items:
         resposedict = {
     'vehicleId' : '',
@@ -140,7 +91,8 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
     'VehicleDirectionAngle' : '',
     'fueldata' : ''
 }
-        if item['id'] == int(vehicleid):
+        device_data = item['device_data']
+        if str(device_data['imei']) in vehicleid:
             resposedict['vehicleId'] = item['name']
             resposedict['lat'] = item["lat"]
             resposedict['long'] = item["lng"]
@@ -148,6 +100,61 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
             resposedict['engineStatus'] = item["online"]
             resposedict['speed'] = item["speed"]
             responselist.append(resposedict)
+            vid = str(item['id'])
+            tablename = f'positions_{vid}'
+            
+            # Connect to the database
+            cnx = pymysql.connect(
+                host="localhost",
+                user="root",
+                password="hash4",
+                database="hypegps_traccar"
+                #group="hypegps"
+            )
+            # Create a cursor object
+            cursor = cnx.cursor()
+
+            # Execute the SHOW TABLES query
+            cursor.execute(f"SHOW TABLES LIKE '{tablename}'")
+
+            # Fetch the results
+            results = cursor.fetchall()
+            print(f'length of tupple {len(results)}')
+            # Print the results
+            if len(results) > 0:
+                cursor.execute(f"SELECT * FROM `{tablename}` WHERE `time` BETWEEN '{datefrom} 00:00:00' AND '{dateto} 23:59:59'")
+                rows = cursor.fetchall()
+                #rows = cursor.execute(f"SELECT * FROM '{tablename}' WHERE 'time' BETWEEN '{datefrom} 00:00:00' AND '{dateto} 23:59:59'")
+                
+                for row in rows:
+                    history = {}
+                    '''
+                    address = requests.get(f'http://osm.autotel.pk:8080/reverse?format=geojson&lat={row[4]}&lon={row[5]}').json()
+                    features = address['features']
+                    
+                    features1 = features[0]
+                    properties = features1['properties']
+                    #print(features1)
+                    display_address = properties['display_name']
+                    '''
+                    history['lat'] = row[4]
+                    history['long'] = row[5]
+                    match = re.search(r"<ignition>(\w+)</ignition>", row[6])
+                    history['timestamp'] = row[9]
+                    history['speed'] = row[8]
+                    history['engineStatus'] = match.group(1)
+                    history['Location name'] = ''#display_address
+                    history['Fuel Data'] = ''
+                    history['vector_angle'] = row[3]
+                    history['temprature'] = ''
+                    vehicleHistory.append(history)
+            
+            else:
+                print('No Vehicle data found.')
+            #print(vehicleHistory)
+            cursor.close()
+            cnx.close()
+    
     return  vehicleHistory
 
 @api.get("/violations/")
