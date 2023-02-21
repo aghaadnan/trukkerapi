@@ -156,7 +156,7 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
             cursor.close()
             cnx.close()
     
-    return  type(vehicleid)
+    return  {'type':str(type(vehicleid))}
 @api.get("/violations/")
 def get_voilations(clientid, vehicleid, datefrom, dateto):
     voilationslist = []
