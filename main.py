@@ -159,30 +159,64 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
 def get_voilations(clientid, vehicleid, datefrom, dateto):
     voilationslist = []
     api_hash = "$2y$10$B3j6pYUWdewxAiiXJA4KW.Q6j8I7J5UmUWG0EtT9SWz79xKAFnaF."
-    jsonobj = requests.get(f"https://tracknow.pk/api/get_events?lang=en&device_id={vehicleid}&user_api_hash={api_hash}&date_from={datefrom}&date_to={dateto}").json()
-    items = jsonobj['items']
-    for item in items['data']:
-        voilationdict = {}
-        if not item['message'] == 'Ignition ON' and not item['message'] == 'Ignition OFF':
-            voilationdict['voilation'] = item['message']
-            voilationdict['timestamp'] = item['time']
-            voilationdict['lat'] = item['latitude']
-            voilationdict['long'] = item['longitude']
-            voilationdict['engineStatus'] = 'ON'
-            additional = item['additional']
-            voilationdict['speed'] = additional['overspeed_speed']
-            voilationdict['Location name'] = item['longitude']
-            address = requests.get(f'http://osm.autotel.pk:8080/reverse?format=geojson&lat={item["latitude"]}&lon={item["longitude"]}').json()
-            features = address['features']
+    jsonobj = requests.get(f"https://tracknow.pk/api/get_devices?lang=en&user_api_hash={api_hash}").json()
+    dictobject = jsonobj[0]
+    items = dictobject["items"]
+    responselist = []
+    vehicleHistory = []
+    for item in items:
+        resposedict = {
+    'vehicleId' : '',
+    'lat' : '',
+    'long' : '',
+    'timestamp' : '',
+    'speed' : '',
+    'engineStatus' : '',
+    'locationame' : '',
+    'VehicleDirectionAngle' : '',
+    'fueldata' : ''
+}
+        device_data = item['device_data']
+        
+        imei = device_data['imei']
+        print(imei)
+        if str(device_data['imei']) == str(vehicleid):
+            resposedict['vehicleId'] = item['name']
+            resposedict['lat'] = item["lat"]
+            resposedict['long'] = item["lng"]
+            resposedict['timestamp'] = item["timestamp"]
+            resposedict['engineStatus'] = item["online"]
+            resposedict['speed'] = item["speed"]
+            responselist.append(resposedict)
+            vid = item['id']
+            APIURL1= f"https://tracknow.pk/api/get_events?lang=en&device_id={vid}&user_api_hash={api_hash}&date_from={datefrom}&date_to={dateto}"
+            print(APIURL1)
+            jsonobj1 = requests.get(f"https://tracknow.pk/api/get_events?lang=en&device_id={vid}&user_api_hash={api_hash}&date_from={datefrom}&date_to={dateto}").json()
             
-            features1 = features[0]
-            properties = features1['properties']
-            #print(features1)
-            display_address = properties['display_name']
-            voilationdict['Location name'] = display_address
-            voilationdict['Fuel Data']  = ''
-            voilationslist.append(voilationdict)
+            items = jsonobj1['items']
+            for item in items['data']:
+                voilationdict = {}
+                if not item['message'] == 'Ignition ON' and not item['message'] == 'Ignition OFF':
+                    voilationdict['voilation'] = item['message']
+                    voilationdict['timestamp'] = item['time']
+                    voilationdict['lat'] = item['latitude']
+                    voilationdict['long'] = item['longitude']
+                    voilationdict['engineStatus'] = 'ON'
+                    additional = item['additional']
+                    voilationdict['speed'] = additional['overspeed_speed']
+                    voilationdict['Location name'] = item['longitude']
+                    address = requests.get(f'http://103.31.81.217:8080/reverse?format=geojson&lat={item["latitude"]}&lon={item["longitude"]}').json()
+                    features = address['features']
+                    
+                    features1 = features[0]
+                    properties = features1['properties']
+                    #print(features1)
+                    display_address = properties['display_name']
+                    voilationdict['Location name'] = display_address
+                    voilationdict['Fuel Data']  = ''
+                    voilationslist.append(voilationdict)
 
-
+        else:
+            print('No Vehicle data found.')
     return voilationslist
 
