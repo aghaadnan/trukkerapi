@@ -93,7 +93,7 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
 }
         device_data = item['device_data']
         print(device_data)
-        if str(device_data['imei']) in vehicleid:
+        if str(device_data['imei']) in str(vehicleid):
             resposedict['vehicleId'] = item['name']
             resposedict['lat'] = item["lat"]
             resposedict['long'] = item["lng"]
