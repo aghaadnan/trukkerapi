@@ -92,6 +92,7 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
     'fueldata' : ''
 }
         device_data = item['device_data']
+        print(device_data)
         if str(device_data['imei']) in vehicleid:
             resposedict['vehicleId'] = item['name']
             resposedict['lat'] = item["lat"]
