@@ -155,7 +155,7 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
             #print(vehicleHistory)
             cursor.close()
             cnx.close()
-    
+            #asdasdasd
     return  {'type': imei}
 @api.get("/violations/")
 def get_voilations(clientid, vehicleid, datefrom, dateto):
