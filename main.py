@@ -72,7 +72,7 @@ def current_state(clientid, vehicleids):
 @api.get("/detail_history")
 def detail_history(clientid, vehicleid, datefrom, dateto):
     
-
+    imei = ""
     api_hash = "$2y$10$B3j6pYUWdewxAiiXJA4KW.Q6j8I7J5UmUWG0EtT9SWz79xKAFnaF."
     jsonobj = requests.get(f"https://tracknow.pk/api/get_devices?lang=en&user_api_hash={api_hash}").json()
     dictobject = jsonobj[0]
@@ -92,7 +92,7 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
     'fueldata' : ''
 }
         device_data = item['device_data']
-        print(device_data)
+        imei = device_data['imei']
         if str(device_data['imei']) in str(vehicleid):
             resposedict['vehicleId'] = item['name']
             resposedict['lat'] = item["lat"]
@@ -156,7 +156,7 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
             cursor.close()
             cnx.close()
     
-    return  {'type':str(type(vehicleid))}
+    return  {'type': imei}
 @api.get("/violations/")
 def get_voilations(clientid, vehicleid, datefrom, dateto):
     voilationslist = []
