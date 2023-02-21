@@ -150,7 +150,8 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
             #print(vehicleHistory)
             cursor.close()
             cnx.close()
-            
+        else:
+            print('No Vehicle data found.')
             #asdasdasd
                   
     return  vehicleHistory
