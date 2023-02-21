@@ -156,7 +156,7 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
             cursor.close()
             cnx.close()
     
-    return  vehicleHistory
+    return  resposedict
 
 @api.get("/violations/")
 def get_voilations(clientid, vehicleid, datefrom, dateto):
