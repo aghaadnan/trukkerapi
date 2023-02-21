@@ -92,8 +92,10 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
     'fueldata' : ''
 }
         device_data = item['device_data']
+        
         imei = device_data['imei']
-        if str(device_data['imei']) in str(vehicleid):
+        print(imei)
+        if str(device_data['imei']) == str(vehicleid):
             resposedict['vehicleId'] = item['name']
             resposedict['lat'] = item["lat"]
             resposedict['long'] = item["lng"]
@@ -102,6 +104,7 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
             resposedict['speed'] = item["speed"]
             responselist.append(resposedict)
             vid = str(item['id'])
+            
             tablename = f'positions_{vid}'
             
             # Connect to the database
@@ -129,15 +132,7 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
                 
                 for row in rows:
                     history = {}
-                    '''
-                    address = requests.get(f'http://osm.autotel.pk:8080/reverse?format=geojson&lat={row[4]}&lon={row[5]}').json()
-                    features = address['features']
-                    
-                    features1 = features[0]
-                    properties = features1['properties']
-                    #print(features1)
-                    display_address = properties['display_name']
-                    '''
+             
                     history['lat'] = row[4]
                     history['long'] = row[5]
                     match = re.search(r"<ignition>(\w+)</ignition>", row[6])
@@ -155,8 +150,10 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
             #print(vehicleHistory)
             cursor.close()
             cnx.close()
+            
             #asdasdasd
-    return  {'type': imei}
+                  
+    return  vehicleHistory
 @api.get("/violations/")
 def get_voilations(clientid, vehicleid, datefrom, dateto):
     voilationslist = []
