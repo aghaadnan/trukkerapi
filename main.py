@@ -29,9 +29,9 @@ def current_state(clientid, vehicleids):
     vehicleids = vehicleids.replace('\"', '')
     vehicleids = vehicleids.replace('"', '')
     vehicleidsList = vehicleids[1:-1].split(",")
-    api_hash = "$2y$10$B3j6pYUWdewxAiiXJA4KW.Q6j8I7J5UmUWG0EtT9SWz79xKAFnaF."
+    api_hash = "$2y$10$V4FYXIiJwyDbBmnk20XzvemcrFHvofHp0zt80qVUQoWLUShXDH0oW"
     #jsonobj = requests.get(f"http://localhost/api/get_devices?lang=en&user_api_hash={api_hash}").json()
-    jsonobj = requests.get(f"https://tracknow.pk/api/get_devices?lang=en&user_api_hash={api_hash}").json()
+    jsonobj = requests.get(f"http://world.autotel.pk/api/get_devices?lang=en&user_api_hash={api_hash}").json()
     dictobject = jsonobj[0]
     items = dictobject["items"]
     for item in items:
@@ -73,8 +73,8 @@ def current_state(clientid, vehicleids):
 def detail_history(clientid, vehicleid, datefrom, dateto):
     
     imei = ""
-    api_hash = "$2y$10$B3j6pYUWdewxAiiXJA4KW.Q6j8I7J5UmUWG0EtT9SWz79xKAFnaF."
-    jsonobj = requests.get(f"https://tracknow.pk/api/get_devices?lang=en&user_api_hash={api_hash}").json()
+    api_hash = "$2y$10$V4FYXIiJwyDbBmnk20XzvemcrFHvofHp0zt80qVUQoWLUShXDH0oW"
+    jsonobj = requests.get(f"http://world.autotel.pk/api/get_devices?lang=en&user_api_hash={api_hash}").json()
     dictobject = jsonobj[0]
     items = dictobject["items"]
     responselist = []
@@ -158,8 +158,8 @@ def detail_history(clientid, vehicleid, datefrom, dateto):
 @api.get("/violations/")
 def get_voilations(clientid, vehicleid, datefrom, dateto):
     voilationslist = []
-    api_hash = "$2y$10$B3j6pYUWdewxAiiXJA4KW.Q6j8I7J5UmUWG0EtT9SWz79xKAFnaF."
-    jsonobj = requests.get(f"https://tracknow.pk/api/get_devices?lang=en&user_api_hash={api_hash}").json()
+    api_hash = "$2y$10$V4FYXIiJwyDbBmnk20XzvemcrFHvofHp0zt80qVUQoWLUShXDH0oW"
+    jsonobj = requests.get(f"http://world.autotel.pk/api/get_devices?lang=en&user_api_hash={api_hash}").json()
     dictobject = jsonobj[0]
     items = dictobject["items"]
     responselist = []
@@ -189,9 +189,9 @@ def get_voilations(clientid, vehicleid, datefrom, dateto):
             resposedict['speed'] = item["speed"]
             responselist.append(resposedict)
             vid = item['id']
-            APIURL1= f"https://tracknow.pk/api/get_events?lang=en&device_id={vid}&user_api_hash={api_hash}&date_from={datefrom}&date_to={dateto}"
-            print(APIURL1)
-            jsonobj1 = requests.get(f"https://tracknow.pk/api/get_events?lang=en&device_id={vid}&user_api_hash={api_hash}&date_from={datefrom}&date_to={dateto}").json()
+            #APIURL1= f"https://tracknow.pk/api/get_events?lang=en&device_id={vid}&user_api_hash={api_hash}&date_from={datefrom}&date_to={dateto}"
+            #print(APIURL1)
+            jsonobj1 = requests.get(f"http://world.autotel.pk/api/get_events?lang=en&device_id={vid}&user_api_hash={api_hash}&date_from={datefrom}&date_to={dateto}").json()
             
             items = jsonobj1['items']
             for item in items['data']:
